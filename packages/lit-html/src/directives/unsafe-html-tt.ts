@@ -111,8 +111,10 @@ export class UnsafeHTMLTTDirective extends Directive {
         child.remove();
         child = next;
       }
-      // Insert the new fragment
-      part._$endNode!.parentNode!.insertBefore(frag, part._$endNode);
+      // Insert the new fragment.
+      // _$endNode can be null (means "end of parent"), so get parentNode from
+      // _$startNode instead. insertBefore(frag, null) appends, which is correct.
+      part._$startNode.parentNode!.insertBefore(frag, part._$endNode ?? null);
       return noChange;
     }
 

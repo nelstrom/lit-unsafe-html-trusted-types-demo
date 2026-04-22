@@ -1,9 +1,11 @@
 import {html, render} from 'lit-html';
 import {unsafeHtmlTT} from 'lit-html/directives/unsafe-html-tt.js';
 import DOMPurify from '/js/dompurify.js';
+import {setupDemoArea} from './demo-utils.js';
+
+const {result, showReset} = setupDemoArea();
 
 document.getElementById('run-btn').addEventListener('click', () => {
-  const result = document.getElementById('result');
   result.className = 'result-box';
   result.textContent = '';
 
@@ -17,11 +19,10 @@ document.getElementById('run-btn').addEventListener('click', () => {
     info.textContent = `DOMPurify returned TrustedHTML: ${window.trustedTypes?.isHTML(trustedHtml)}`;
     result.appendChild(info);
 
-    // unsafeHtmlTT accepts TrustedHTML directly — inserts via setHTMLUnsafe
-    render(
-      html`<div>${unsafeHtmlTT(trustedHtml)}</div>`,
-      result
-    );
+    const litTarget = document.createElement('div');
+    result.appendChild(litTarget);
+
+    render(html`<div>${unsafeHtmlTT(trustedHtml)}</div>`, litTarget);
     result.classList.add('success');
 
     const note = document.createElement('p');
@@ -32,4 +33,5 @@ document.getElementById('run-btn').addEventListener('click', () => {
     result.classList.add('error');
     result.textContent = `Error: ${e.message}`;
   }
+  showReset();
 });

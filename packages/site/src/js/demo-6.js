@@ -1,13 +1,14 @@
+import {setupDemoArea} from './demo-utils.js';
+
+const {result, showReset} = setupDemoArea();
+
 document.getElementById('run-btn').addEventListener('click', () => {
-  const result = document.getElementById('result');
   result.className = 'result-box';
   result.textContent = '';
 
   const userInput = `<img src=x onerror="alert('XSS!')"><p>Hello from setHTML()!</p>`;
 
   if ('setHTML' in Element.prototype) {
-    // setHTML() is a safe sink — the browser sanitizes before insertion.
-    // No TrustedHTML needed; no alert fires.
     const container = document.createElement('div');
     container.setHTML(userInput);
     result.appendChild(container);
@@ -23,4 +24,5 @@ document.getElementById('run-btn').addEventListener('click', () => {
       'It is currently supported in Firefox 148+ and Chrome (with the Sanitizer API flag enabled). ' +
       'In production, a safeHtml directive would fall back to DOMPurify + unsafeHtmlTT.';
   }
+  showReset();
 });

@@ -1,11 +1,13 @@
 import {html, render} from 'lit-html';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 import DOMPurify from '/js/dompurify.js';
+import {setupDemoArea} from './demo-utils.js';
+
+const {result, showReset} = setupDemoArea();
 
 document.getElementById('run-btn').addEventListener('click', () => {
-  const result = document.getElementById('result');
   result.className = 'result-box';
-  result.innerHTML = '';
+  result.textContent = '';
 
   const userInput = `<img src=x onerror="alert('XSS!')"> Hello!`;
   const sanitized = DOMPurify.sanitize(userInput);
@@ -15,16 +17,15 @@ document.getElementById('run-btn').addEventListener('click', () => {
   note.textContent = `DOMPurify output: ${sanitized}`;
   result.appendChild(note);
 
+  const litTarget = document.createElement('div');
+  result.appendChild(litTarget);
+
   try {
-    const container = document.createElement('div');
-    render(
-      html`<div>${unsafeHTML(sanitized)}</div>`,
-      container
-    );
-    result.appendChild(container);
+    render(html`<div>${unsafeHTML(sanitized)}</div>`, litTarget);
     result.classList.add('success');
   } catch (e) {
     result.classList.add('error');
     result.textContent = `Error: ${e.message}`;
   }
+  showReset();
 });

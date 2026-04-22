@@ -1,0 +1,107 @@
+---
+layout: layout.njk
+title: "5. The Proposed Fix"
+csp: true
+---
+
+<article>
+  <span class="badge badge-success">PROPOSED FIX</span>
+  <h2>5. The Proposed Fix: unsafeHtmlTT</h2>
+
+  <div class="csp-indicator csp-on">
+    ● Trusted Types: ON — <code>require-trusted-types-for 'script'; trusted-types dompurify lit-html</code>
+  </div>
+
+  <p>
+    The modified <code>unsafeHtmlTT()</code> directive handles three cases:
+  </p>
+
+  <ol>
+    <li>
+      <strong>TrustedHTML value:</strong> Inserts via <code>setHTMLUnsafe()</code> —
+      bypasses Lit's fake-template path entirely, using the already-sanitized value directly.
+    </li>
+    <li>
+      <strong>Plain string + Trusted Types active:</strong> Throws — enforcing that callers
+      must sanitize first.
+    </li>
+    <li>
+      <strong>Plain string, no Trusted Types:</strong> Falls back to the existing behaviour
+      for backwards compatibility.
+    </li>
+  </ol>
+
+  <div class="code-block">
+    <div class="code-block-label">unsafe-html-tt.ts — the modified update() method</div>
+    <pre><code class="language-javascript">update(part, [value]) {
+  // Case 1: TrustedHTML — insert via setHTMLUnsafe (safe sink)
+  if (window.trustedTypes?.isHTML(value)) {
+    const templateEl = document.createElement('template');
+    templateEl.setHTMLUnsafe(value);         // accepts TrustedHTML directly
+    const frag = templateEl.content.cloneNode(true);
+
+    // Clear existing children between Lit's marker nodes
+    let child = part._$startNode.nextSibling;
+    while (child && child !== part._$endNode) {
+      const next = child.nextSibling;
+      child.remove();
+      child = next;
+    }
+    part._$endNode.parentNode.insertBefore(frag, part._$endNode);
+    return noChange;
+  }
+
+  // Case 2: plain string with TT active — enforce
+  if (typeof value === 'string' && window.trustedTypes) {
+    throw new Error(
+      'unsafeHtmlTT() received a plain string while Trusted Types is active. ' +
+      'Pass a TrustedHTML object.'
+    );
+  }
+
+  // Case 3: no TT — existing path
+  return super.update(part, [value]);
+}</code></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">demo-5.js — what you're running</div>
+    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+import { unsafeHtmlTT } from 'lit-html/directives/unsafe-html-tt.js';
+import DOMPurify from '/js/dompurify.js';
+
+const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+
+// DOMPurify returns TrustedHTML when RETURN_TRUSTED_TYPE: true
+const trustedHtml = DOMPurify.sanitize(userInput, { RETURN_TRUSTED_TYPE: true });
+
+render(
+  html`&lt;div&gt;${unsafeHtmlTT(trustedHtml)}&lt;/div&gt;`,
+  document.querySelector('#result')
+);</code></pre>
+  </div>
+
+  <div class="demo-area">
+    <h3>Interactive Demo</h3>
+    <p style="font-size:0.85rem;color:#546e7a;margin-top:0">
+      No alert — DOMPurify stripped the XSS, and Trusted Types enforcement stays intact.
+    </p>
+    <button class="run-btn" id="run-btn">Run Demo</button>
+    <div class="result-box" id="result">
+      <em style="color:#999">Output will appear here after clicking "Run Demo".</em>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem">
+    <strong>Caveat:</strong> This demo accesses Lit's private <code>_$startNode</code> and
+    <code>_$endNode</code> fields. In a real implementation, Lit would expose a public API
+    for inserting fragments into a <code>ChildPart</code>.
+  </p>
+
+  <div class="page-nav">
+    <a href="/pages/4-trusted-html-breaks/">← TrustedHTML Breaks</a>
+    <a href="/pages/6-future-sethtml/">Next: Future: setHTML() →</a>
+  </div>
+</article>
+
+<script type="module" src="/js/demo-5.js"></script>

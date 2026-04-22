@@ -1,0 +1,93 @@
+---
+layout: layout.njk
+title: "6. Future Direction: setHTML()"
+csp: true
+---
+
+<article>
+  <span class="badge badge-info">FUTURE</span>
+  <h2>6. Future Direction: setHTML()</h2>
+
+  <div class="csp-indicator csp-on">
+    ● Trusted Types: ON — <code>require-trusted-types-for 'script'; trusted-types dompurify lit-html</code>
+  </div>
+
+  <p>
+    The <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/setHTML" target="_blank">Sanitizer API</a>
+    (<code>element.setHTML()</code>) is a <em>safe sink</em> — not a Trusted Types sink.
+    The browser sanitizes the HTML itself before insertion, so no <code>TrustedHTML</code>
+    is required and no Trusted Types policy is needed.
+  </p>
+
+  <p>
+    A future <code>safeHtml(string, sanitizerConfig)</code> directive could use this API
+    directly, making sanitization a browser-enforced guarantee rather than a developer
+    convention.
+  </p>
+
+  <div class="code-block">
+    <div class="code-block-label">Hypothetical safeHtml directive sketch</div>
+    <pre><code class="language-javascript">// Hypothetical — not yet implemented in this demo
+function safeHtmlDirective(value, sanitizerConfig = {}) {
+  return {
+    render() { return nothing; },
+    update(part) {
+      if (!('setHTML' in Element.prototype)) {
+        // Graceful degradation: fall back to DOMPurify
+        const clean = DOMPurify.sanitize(value);
+        part._$endNode.insertAdjacentHTML('beforebegin', clean);
+        return noChange;
+      }
+      const div = document.createElement('div');
+      div.setHTML(value, { sanitizer: sanitizerConfig });
+      // Insert nodes into part...
+      return noChange;
+    }
+  };
+}</code></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">demo-6.js — what you're running</div>
+    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+
+const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt;&lt;p&gt;Hello from setHTML!&lt;/p&gt;`;
+
+const container = document.querySelector('#result');
+
+if ('setHTML' in Element.prototype) {
+  // setHTML is a safe sink — browser sanitizes before insertion
+  container.setHTML(userInput);
+} else {
+  container.textContent =
+    'setHTML() is not available in this browser. ' +
+    'It is currently supported in Firefox 148+ and Chrome (behind a flag). ' +
+    'In production, a safeHtml directive would fall back to DOMPurify.'
+}</code></pre>
+  </div>
+
+  <div class="demo-area">
+    <h3>Interactive Demo</h3>
+    <p style="font-size:0.85rem;color:#546e7a;margin-top:0">
+      Requires Firefox 148+ or Chrome with the Sanitizer API enabled. Other browsers show a compat notice.
+    </p>
+    <button class="run-btn" id="run-btn">Run Demo</button>
+    <div class="result-box" id="result">
+      <em style="color:#999">Output will appear here after clicking "Run Demo".</em>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem">
+    <strong>Why this matters:</strong> <code>setHTML()</code> makes sanitization
+    an intrinsic browser behaviour — there's nothing for developers to forget.
+    Combined with a Lit directive, this could replace <code>unsafeHTML</code> entirely
+    for contexts where Trusted Types isn't required.
+  </p>
+
+  <div class="page-nav">
+    <a href="/pages/5-modified-directive/">← Proposed Fix</a>
+    <a href="/">↩ Back to Home</a>
+  </div>
+</article>
+
+<script type="module" src="/js/demo-6.js"></script>

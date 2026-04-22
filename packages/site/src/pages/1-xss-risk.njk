@@ -1,0 +1,58 @@
+---
+layout: layout.njk
+title: "1. The XSS Risk"
+---
+
+<article>
+  <span class="badge badge-danger">XSS RISK</span>
+  <h2>1. The XSS Risk</h2>
+
+  <div class="csp-indicator csp-off">
+    ● Trusted Types: OFF (no CSP on this page)
+  </div>
+
+  <p>
+    <code>unsafeHTML()</code> renders a raw string directly as HTML. If that string
+    comes from user input — even indirectly — it's an XSS sink.
+  </p>
+
+  <p>
+    Click "Run Demo" below. The XSS payload <code>&lt;img src=x onerror="alert('XSS!')"&gt;</code>
+    is passed directly to <code>unsafeHTML()</code>. Without sanitization, the
+    <code>onerror</code> handler fires immediately.
+  </p>
+
+  <div class="code-block">
+    <div class="code-block-label">demo-1.js — what you're running</div>
+    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+
+const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+
+render(
+  html`&lt;div&gt;${unsafeHTML(userInput)}&lt;/div&gt;`,
+  document.querySelector('#result')
+);</code></pre>
+  </div>
+
+  <div class="demo-area">
+    <h3>Interactive Demo</h3>
+    <button class="run-btn" id="run-btn">Run Demo</button>
+    <div class="result-box" id="result">
+      <em style="color:#999">Output will appear here after clicking "Run Demo".</em>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem">
+    The alert fires because <code>unsafeHTML</code> sets <code>innerHTML</code>
+    via a fake <code>TemplateStringsArray</code>, giving the browser no chance to
+    intercept the injection.
+  </p>
+
+  <div class="page-nav">
+    <span></span>
+    <a href="/pages/2-manual-sanitization/">Next: Manual Sanitization →</a>
+  </div>
+</article>
+
+<script type="module" src="/js/demo-1.js"></script>

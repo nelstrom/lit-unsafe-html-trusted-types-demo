@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} — lit-unsafe-html &amp; Trusted Types</title>
+  {% if csp %}
+  <meta http-equiv="Content-Security-Policy"
+        content="require-trusted-types-for 'script'; trusted-types dompurify lit-html">
+  {% endif %}
+
+  <!-- Import map: resolves lit-html bare specifiers to site-local paths -->
+  <script type="importmap">
+  {
+    "imports": {
+      "lit-html": "/lit-html/lit-html.js",
+      "lit-html/directive.js": "/lit-html/directive.js",
+      "lit-html/directive-helpers.js": "/lit-html/directive-helpers.js",
+      "lit-html/async-directive.js": "/lit-html/async-directive.js",
+      "lit-html/directives/unsafe-html.js": "/lit-html/directives/unsafe-html.js",
+      "lit-html/directives/unsafe-html-tt.js": "/lit-html/directives/unsafe-html-tt.js"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      background: #f8f9fa;
+      color: #1a1a2e;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #e8e8f0;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      border-bottom: 3px solid #e63946;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-family: monospace;
+      font-weight: 700;
+    }
+
+    header a {
+      color: #a8c8ff;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    header a:hover { text-decoration: underline; }
+
+    nav {
+      background: #2d2d44;
+      padding: 0.5rem 2rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #c8c8e0;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-family: monospace;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+    }
+
+    nav a:hover, nav a.active {
+      background: #e63946;
+      color: white;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    article {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: #1a1a2e;
+      border-bottom: 2px solid #e63946;
+      padding-bottom: 0.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      font-family: monospace;
+      margin-bottom: 0.5rem;
+    }
+
+    .badge-danger { background: #fee; color: #c00; border: 1px solid #fcc; }
+    .badge-warning { background: #fff3cd; color: #856404; border: 1px solid #ffd; }
+    .badge-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .badge-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+    .code-block {
+      margin: 1.5rem 0;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+
+    .code-block-label {
+      background: #333;
+      color: #999;
+      font-size: 0.75rem;
+      font-family: monospace;
+      padding: 0.3rem 0.75rem;
+    }
+
+    pre[class*="language-"] {
+      margin: 0;
+      border-radius: 0;
+      font-size: 0.85rem;
+    }
+
+    .demo-area {
+      background: #f0f4f8;
+      border: 2px dashed #b0bec5;
+      border-radius: 6px;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .demo-area h3 {
+      margin: 0 0 0.75rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #546e7a;
+    }
+
+    button.run-btn {
+      background: #e63946;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: monospace;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    button.run-btn:hover { background: #c1121f; }
+
+    .result-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border: 1px solid #cfd8dc;
+      border-radius: 4px;
+      min-height: 3rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .result-box.error {
+      background: #fff5f5;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+
+    .result-box.success {
+      background: #f0fff4;
+      border-color: #c3e6cb;
+    }
+
+    .csp-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-family: monospace;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .csp-on { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .csp-off { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+
+    .page-nav a {
+      color: #e63946;
+      text-decoration: none;
+      font-family: monospace;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid #e63946;
+      border-radius: 4px;
+    }
+
+    .page-nav a:hover { background: #e63946; color: white; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🔐 lit-unsafe-html &amp; Trusted Types</h1>
+  <a href="https://github.com/lit/lit/issues" target="_blank" rel="noopener">→ Lit Issue (to be filed)</a>
+</header>
+
+<nav>
+  <a href="/" {% if page.url == "/" %}class="active"{% endif %}>Home</a>
+  <a href="/pages/1-xss-risk/" {% if page.url == "/pages/1-xss-risk/" %}class="active"{% endif %}>1. XSS Risk</a>
+  <a href="/pages/2-manual-sanitization/" {% if page.url == "/pages/2-manual-sanitization/" %}class="active"{% endif %}>2. Manual Sanitization</a>
+  <a href="/pages/3-trusted-types-bypass/" {% if page.url == "/pages/3-trusted-types-bypass/" %}class="active"{% endif %}>3. TT Bypass</a>
+  <a href="/pages/4-trusted-html-breaks/" {% if page.url == "/pages/4-trusted-html-breaks/" %}class="active"{% endif %}>4. TrustedHTML Breaks</a>
+  <a href="/pages/5-modified-directive/" {% if page.url == "/pages/5-modified-directive/" %}class="active"{% endif %}>5. Proposed Fix</a>
+  <a href="/pages/6-future-sethtml/" {% if page.url == "/pages/6-future-sethtml/" %}class="active"{% endif %}>6. Future: setHTML()</a>
+</nav>
+
+<main>
+  {{ content | safe }}
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

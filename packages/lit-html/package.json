@@ -1,0 +1,23 @@
+{
+  "name": "@demo/lit-html",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/lit-html.js",
+  "exports": {
+    ".": "./dist/lit-html.js",
+    "./directive.js": "./dist/directive.js",
+    "./directive-helpers.js": "./dist/directive-helpers.js",
+    "./async-directive.js": "./dist/async-directive.js",
+    "./static.js": "./dist/static.js",
+    "./is-server.js": "./dist/is-server.js",
+    "./directives/unsafe-html.js": "./dist/directives/unsafe-html.js",
+    "./directives/unsafe-html-tt.js": "./dist/directives/unsafe-html-tt.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "trusted-types": "^2.0.0"
+  }
+}

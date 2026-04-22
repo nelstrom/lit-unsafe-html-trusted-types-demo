@@ -1,0 +1,78 @@
+---
+layout: layout.njk
+title: "4. TrustedHTML Breaks Current unsafeHTML"
+csp: true
+---
+
+<article>
+  <span class="badge badge-warning">THROWS</span>
+  <h2>4. TrustedHTML Breaks Current unsafeHTML</h2>
+
+  <div class="csp-indicator csp-on">
+    ● Trusted Types: ON — <code>require-trusted-types-for 'script'; trusted-types dompurify lit-html</code>
+  </div>
+
+  <p>
+    The natural "fix" might be: use DOMPurify with <code>RETURN_TRUSTED_TYPE: true</code>
+    to get a <code>TrustedHTML</code> object, then pass it to <code>unsafeHTML()</code>.
+    This would prove that the value was sanitized before rendering.
+  </p>
+
+  <p>
+    <strong>But it throws.</strong> The current directive explicitly checks
+    <code>typeof value !== 'string'</code> and throws an error for non-string inputs.
+    <code>TrustedHTML</code> objects are not strings.
+  </p>
+
+  <div class="code-block">
+    <div class="code-block-label">unsafe-html.ts:38–43 — the type guard</div>
+    <pre><code class="language-javascript">if (typeof value != 'string') {
+  throw new Error(
+    `${this.constructor.directiveName}() called with a non-string value`
+  );
+}</code></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-label">demo-4.js — what you're running</div>
+    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import DOMPurify from '/js/dompurify.js';
+
+const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+
+// Get a TrustedHTML object — this is the "right" way to use Trusted Types
+const trustedHtml = DOMPurify.sanitize(userInput, { RETURN_TRUSTED_TYPE: true });
+console.log('Is TrustedHTML:', window.trustedTypes?.isHTML(trustedHtml)); // true
+
+// This throws: "unsafeHTML() called with a non-string value"
+render(
+  html`&lt;div&gt;${unsafeHTML(trustedHtml)}&lt;/div&gt;`,
+  document.querySelector('#result')
+);</code></pre>
+  </div>
+
+  <div class="demo-area">
+    <h3>Interactive Demo</h3>
+    <p style="font-size:0.85rem;color:#546e7a;margin-top:0">
+      Check the DevTools console for the error message.
+    </p>
+    <button class="run-btn" id="run-btn">Run Demo</button>
+    <div class="result-box" id="result">
+      <em style="color:#999">Output will appear here after clicking "Run Demo".</em>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem">
+    So there's no way to use <code>unsafeHTML()</code> correctly with Trusted Types:
+    passing a raw string bypasses enforcement; passing <code>TrustedHTML</code> throws.
+    The next page shows the proposed fix.
+  </p>
+
+  <div class="page-nav">
+    <a href="/pages/3-trusted-types-bypass/">← TT Bypass</a>
+    <a href="/pages/5-modified-directive/">Next: The Proposed Fix →</a>
+  </div>
+</article>
+
+<script type="module" src="/js/demo-4.js"></script>

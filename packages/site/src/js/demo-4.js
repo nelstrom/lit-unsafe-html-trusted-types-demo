@@ -5,7 +5,7 @@ import DOMPurify from '/js/dompurify.js';
 document.getElementById('run-btn').addEventListener('click', () => {
   const result = document.getElementById('result');
   result.className = 'result-box';
-  result.innerHTML = '';
+  result.textContent = '';
 
   const userInput = `<img src=x onerror="alert('XSS!')"> Hello!`;
 
@@ -31,8 +31,12 @@ document.getElementById('run-btn').addEventListener('click', () => {
     );
   } catch (e) {
     result.classList.add('error');
-    const msg = document.createElement('p');
-    msg.innerHTML = `<strong>Error thrown by unsafeHTML():</strong><br><code>${e.message}</code>`;
-    result.appendChild(msg);
+    // Build error message with DOM APIs (no innerHTML — TT would block it)
+    const heading = document.createElement('strong');
+    heading.textContent = 'Error thrown by unsafeHTML():';
+    const br = document.createElement('br');
+    const code = document.createElement('code');
+    code.textContent = e.message;
+    result.append(heading, br, code);
   }
 });

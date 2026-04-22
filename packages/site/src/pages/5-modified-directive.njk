@@ -33,7 +33,8 @@ csp: true
 
   <div class="code-block">
     <div class="code-block-label">unsafe-html-tt.ts — the modified update() method</div>
-    <pre><code class="language-javascript">update(part, [value]) {
+{% highlight "javascript" %}
+update(part, [value]) {
   // Case 1: TrustedHTML — insert via setHTMLUnsafe (safe sink)
   if (window.trustedTypes?.isHTML(value)) {
     const templateEl = document.createElement('template');
@@ -61,24 +62,27 @@ csp: true
 
   // Case 3: no TT — existing path
   return super.update(part, [value]);
-}</code></pre>
+}
+{% endhighlight %}
   </div>
 
   <div class="code-block">
     <div class="code-block-label">demo-5.js — what you're running</div>
-    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+{% highlight "javascript" %}
+import { html, render } from 'lit-html';
 import { unsafeHtmlTT } from 'lit-html/directives/unsafe-html-tt.js';
 import DOMPurify from '/js/dompurify.js';
 
-const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+const userInput = `<img src=x onerror="alert('XSS!')"> Hello!`;
 
 // DOMPurify returns TrustedHTML when RETURN_TRUSTED_TYPE: true
 const trustedHtml = DOMPurify.sanitize(userInput, { RETURN_TRUSTED_TYPE: true });
 
 render(
-  html`&lt;div&gt;${unsafeHtmlTT(trustedHtml)}&lt;/div&gt;`,
+  html`<div>${unsafeHtmlTT(trustedHtml)}</div>`,
   document.querySelector('#result')
-);</code></pre>
+);
+{% endhighlight %}
   </div>
 
   <div class="demo-area">

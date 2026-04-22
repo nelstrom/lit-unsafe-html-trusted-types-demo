@@ -1,7 +1,7 @@
 document.getElementById('run-btn').addEventListener('click', () => {
   const result = document.getElementById('result');
   result.className = 'result-box';
-  result.innerHTML = '';
+  result.textContent = '';
 
   const userInput = `<img src=x onerror="alert('XSS!')"><p>Hello from setHTML()!</p>`;
 

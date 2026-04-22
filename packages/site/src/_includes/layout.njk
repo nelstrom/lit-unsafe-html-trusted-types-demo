@@ -25,6 +25,10 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <style>
+    /* Eleventy syntax highlight plugin outputs token-* classes, add base pre style */
+    .highlight-source-js { margin: 0; }
+  </style>
+  <style>
     *, *::before, *::after { box-sizing: border-box; }
 
     body {
@@ -247,7 +251,9 @@
   {{ content | safe }}
 </main>
 
+{% if not csp %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+{% endif %}
 </body>
 </html>

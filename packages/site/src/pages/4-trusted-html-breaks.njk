@@ -26,30 +26,33 @@ csp: true
 
   <div class="code-block">
     <div class="code-block-label">unsafe-html.ts:38–43 — the type guard</div>
-    <pre><code class="language-javascript">if (typeof value != 'string') {
+{% highlight "javascript" %}
+if (typeof value != 'string') {
   throw new Error(
     `${this.constructor.directiveName}() called with a non-string value`
   );
-}</code></pre>
+}
+{% endhighlight %}
   </div>
 
   <div class="code-block">
     <div class="code-block-label">demo-4.js — what you're running</div>
-    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+{% highlight "javascript" %}
+import { html, render } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import DOMPurify from '/js/dompurify.js';
 
-const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+const userInput = `<img src=x onerror="alert('XSS!')"> Hello!`;
 
-// Get a TrustedHTML object — this is the "right" way to use Trusted Types
+// Get a TrustedHTML object — the "right" way to use Trusted Types
 const trustedHtml = DOMPurify.sanitize(userInput, { RETURN_TRUSTED_TYPE: true });
-console.log('Is TrustedHTML:', window.trustedTypes?.isHTML(trustedHtml)); // true
 
 // This throws: "unsafeHTML() called with a non-string value"
 render(
-  html`&lt;div&gt;${unsafeHTML(trustedHtml)}&lt;/div&gt;`,
+  html`<div>${unsafeHTML(trustedHtml)}</div>`,
   document.querySelector('#result')
-);</code></pre>
+);
+{% endhighlight %}
   </div>
 
   <div class="demo-area">

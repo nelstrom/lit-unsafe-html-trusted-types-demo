@@ -26,18 +26,20 @@ title: "2. Manual Sanitization Helps (But Isn't Enforced)"
 
   <div class="code-block">
     <div class="code-block-label">demo-2.js — what you're running</div>
-    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+{% highlight "javascript" %}
+import { html, render } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import DOMPurify from '/js/dompurify.js';
 
-const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+const userInput = `<img src=x onerror="alert('XSS!')"> Hello!`;
 const sanitized = DOMPurify.sanitize(userInput);
-// sanitized = "&lt;img src="x"&gt; Hello!" — onerror stripped
+// sanitized = '<img src="x"> Hello!' — onerror stripped
 
 render(
-  html`&lt;div&gt;${unsafeHTML(sanitized)}&lt;/div&gt;`,
+  html`<div>${unsafeHTML(sanitized)}</div>`,
   document.querySelector('#result')
-);</code></pre>
+);
+{% endhighlight %}
   </div>
 
   <div class="demo-area">

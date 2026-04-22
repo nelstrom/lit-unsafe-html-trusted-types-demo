@@ -24,15 +24,17 @@ title: "1. The XSS Risk"
 
   <div class="code-block">
     <div class="code-block-label">demo-1.js — what you're running</div>
-    <pre><code class="language-javascript">import { html, render } from 'lit-html';
+{% highlight "javascript" %}
+import { html, render } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 
-const userInput = `&lt;img src=x onerror="alert('XSS!')"&gt; Hello!`;
+const userInput = `<img src=x onerror="alert('XSS!')"> Hello!`;
 
 render(
-  html`&lt;div&gt;${unsafeHTML(userInput)}&lt;/div&gt;`,
+  html`<div>${unsafeHTML(userInput)}</div>`,
   document.querySelector('#result')
-);</code></pre>
+);
+{% endhighlight %}
   </div>
 
   <div class="demo-area">

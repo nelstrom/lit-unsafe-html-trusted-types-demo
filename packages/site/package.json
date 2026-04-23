@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "eleventy",
-    "dev": "eleventy --serve"
+    "dev": "ELEVENTY_PATH_PREFIX=/lit-unsafe-html-trusted-types-demo/ eleventy --serve"
   },
   "dependencies": {
     "@demo/lit-html": "workspace:*",

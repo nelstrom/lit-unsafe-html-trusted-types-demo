@@ -21,6 +21,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/js");
 
   return {
+    pathPrefix: process.env.ELEVENTY_PATH_PREFIX ?? "/lit-unsafe-html-trusted-types-demo/",
     dir: {
       input: "src",
       output: "_site",

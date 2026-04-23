@@ -1,6 +1,6 @@
 import {html, render} from 'lit-html';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
-import DOMPurify from '/js/dompurify.js';
+import DOMPurify from 'dompurify';
 import {setupDemoArea} from './demo-utils.js';
 
 const {result, showReset} = setupDemoArea();

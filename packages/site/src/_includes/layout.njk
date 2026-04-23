@@ -9,16 +9,17 @@
         content="require-trusted-types-for 'script'; trusted-types dompurify lit-html">
   {% endif %}
 
-  <!-- Import map: resolves lit-html bare specifiers to site-local paths -->
+  <!-- Import map: resolves lit-html and dompurify bare specifiers to site-local paths -->
   <script type="importmap">
   {
     "imports": {
-      "lit-html": "/lit-html/lit-html.js",
-      "lit-html/directive.js": "/lit-html/directive.js",
-      "lit-html/directive-helpers.js": "/lit-html/directive-helpers.js",
-      "lit-html/async-directive.js": "/lit-html/async-directive.js",
-      "lit-html/directives/unsafe-html.js": "/lit-html/directives/unsafe-html.js",
-      "lit-html/directives/unsafe-html-tt.js": "/lit-html/directives/unsafe-html-tt.js"
+      "lit-html": "{{ '/lit-html/lit-html.js' | url }}",
+      "lit-html/directive.js": "{{ '/lit-html/directive.js' | url }}",
+      "lit-html/directive-helpers.js": "{{ '/lit-html/directive-helpers.js' | url }}",
+      "lit-html/async-directive.js": "{{ '/lit-html/async-directive.js' | url }}",
+      "lit-html/directives/unsafe-html.js": "{{ '/lit-html/directives/unsafe-html.js' | url }}",
+      "lit-html/directives/unsafe-html-tt.js": "{{ '/lit-html/directives/unsafe-html-tt.js' | url }}",
+      "dompurify": "{{ '/js/dompurify.js' | url }}"
     }
   }
   </script>
@@ -256,13 +257,13 @@
 </header>
 
 <nav>
-  <a href="/" {% if page.url == "/" %}class="active"{% endif %}>Home</a>
-  <a href="/pages/1-xss-risk/" {% if page.url == "/pages/1-xss-risk/" %}class="active"{% endif %}>1. XSS Risk</a>
-  <a href="/pages/2-manual-sanitization/" {% if page.url == "/pages/2-manual-sanitization/" %}class="active"{% endif %}>2. Manual Sanitization</a>
-  <a href="/pages/3-trusted-types-bypass/" {% if page.url == "/pages/3-trusted-types-bypass/" %}class="active"{% endif %}>3. TT Bypass</a>
-  <a href="/pages/4-trusted-html-breaks/" {% if page.url == "/pages/4-trusted-html-breaks/" %}class="active"{% endif %}>4. TrustedHTML Breaks</a>
-  <a href="/pages/5-modified-directive/" {% if page.url == "/pages/5-modified-directive/" %}class="active"{% endif %}>5. Proposed Fix</a>
-  <a href="/pages/6-future-sethtml/" {% if page.url == "/pages/6-future-sethtml/" %}class="active"{% endif %}>6. Future: setHTML()</a>
+  <a href="{{ '/' | url }}" {% if page.url == "/" %}class="active"{% endif %}>Home</a>
+  <a href="{{ '/pages/1-xss-risk/' | url }}" {% if page.url == "/pages/1-xss-risk/" %}class="active"{% endif %}>1. XSS Risk</a>
+  <a href="{{ '/pages/2-manual-sanitization/' | url }}" {% if page.url == "/pages/2-manual-sanitization/" %}class="active"{% endif %}>2. Manual Sanitization</a>
+  <a href="{{ '/pages/3-trusted-types-bypass/' | url }}" {% if page.url == "/pages/3-trusted-types-bypass/" %}class="active"{% endif %}>3. TT Bypass</a>
+  <a href="{{ '/pages/4-trusted-html-breaks/' | url }}" {% if page.url == "/pages/4-trusted-html-breaks/" %}class="active"{% endif %}>4. TrustedHTML Breaks</a>
+  <a href="{{ '/pages/5-modified-directive/' | url }}" {% if page.url == "/pages/5-modified-directive/" %}class="active"{% endif %}>5. Proposed Fix</a>
+  <a href="{{ '/pages/6-future-sethtml/' | url }}" {% if page.url == "/pages/6-future-sethtml/" %}class="active"{% endif %}>6. Future: setHTML()</a>
 </nav>
 
 <main>

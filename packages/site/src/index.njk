@@ -20,12 +20,12 @@ title: Home
 
   <h3>The 6-Page Narrative</h3>
   <ol>
-    <li><a href="/pages/1-xss-risk/"><strong>The XSS Risk</strong></a> — unsafeHTML with raw user input fires an alert.</li>
-    <li><a href="/pages/2-manual-sanitization/"><strong>Manual Sanitization Helps (But Isn't Enforced)</strong></a> — DOMPurify stops the XSS, but nothing enforces its use.</li>
-    <li><a href="/pages/3-trusted-types-bypass/"><strong>Trusted Types Doesn't Help (Today)</strong></a> — Even with TT active, Lit's internal policy blesses the XSS string.</li>
-    <li><a href="/pages/4-trusted-html-breaks/"><strong>TrustedHTML Breaks Current unsafeHTML</strong></a> — Passing TrustedHTML to the existing directive throws an error.</li>
-    <li><a href="/pages/5-modified-directive/"><strong>The Proposed Fix</strong></a> — A modified directive accepts TrustedHTML and inserts it safely.</li>
-    <li><a href="/pages/6-future-sethtml/"><strong>Future Direction: setHTML()</strong></a> — The upcoming Sanitizer API offers a safe sink without Trusted Types.</li>
+    <li><a href="{{ '/pages/1-xss-risk/' | url }}"><strong>The XSS Risk</strong></a> — unsafeHTML with raw user input fires an alert.</li>
+    <li><a href="{{ '/pages/2-manual-sanitization/' | url }}"><strong>Manual Sanitization Helps (But Isn't Enforced)</strong></a> — DOMPurify stops the XSS, but nothing enforces its use.</li>
+    <li><a href="{{ '/pages/3-trusted-types-bypass/' | url }}"><strong>Trusted Types Doesn't Help (Today)</strong></a> — Even with TT active, Lit's internal policy blesses the XSS string.</li>
+    <li><a href="{{ '/pages/4-trusted-html-breaks/' | url }}"><strong>TrustedHTML Breaks Current unsafeHTML</strong></a> — Passing TrustedHTML to the existing directive throws an error.</li>
+    <li><a href="{{ '/pages/5-modified-directive/' | url }}"><strong>The Proposed Fix</strong></a> — A modified directive accepts TrustedHTML and inserts it safely.</li>
+    <li><a href="{{ '/pages/6-future-sethtml/' | url }}"><strong>Future Direction: setHTML()</strong></a> — The upcoming Sanitizer API offers a safe sink without Trusted Types.</li>
   </ol>
 
   <h3>Key Code Locations</h3>
@@ -45,7 +45,7 @@ title: Home
   </ul>
 
   <p>
-    <a href="/pages/1-xss-risk/" style="display:inline-block;margin-top:1rem;padding:0.6rem 1.4rem;background:#e63946;color:white;border-radius:4px;text-decoration:none;font-family:monospace;">
+    <a href="{{ '/pages/1-xss-risk/' | url }}" style="display:inline-block;margin-top:1rem;padding:0.6rem 1.4rem;background:#e63946;color:white;border-radius:4px;text-decoration:none;font-family:monospace;">
       Start Demo →
     </a>
   </p>

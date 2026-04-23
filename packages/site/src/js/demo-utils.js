@@ -14,12 +14,7 @@ export function setupDemoArea() {
   runBtn.insertAdjacentElement('afterend', resetBtn);
 
   resetBtn.addEventListener('click', () => {
-    result.className = 'result-box';
     result.textContent = '';
-    const placeholder = document.createElement('em');
-    placeholder.style.color = '#999';
-    placeholder.textContent = 'Output will appear here after clicking "Run Demo".';
-    result.appendChild(placeholder);
     resetBtn.style.display = 'none';
   });
 

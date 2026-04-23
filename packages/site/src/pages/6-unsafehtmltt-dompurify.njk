@@ -1,26 +1,26 @@
 ---
 layout: layout.njk
-title: "2. DOMPurify"
+title: "6. TT: sanitize"
 ---
 
 <article>
   <span class="badge badge-warning">NO ENFORCEMENT</span>
-  <h2>2. DOMPurify</h2>
+  <h2>6. unsafeHtmlTT — DOMPurify String</h2>
 
   <div class="csp-indicator csp-off">● Trusted Types: OFF</div>
 
   <div class="outcome-grid">
     <span class="outcome-label">Expected:</span>
-    <span>No XSS — DOMPurify strips the <code>onerror</code> attribute before rendering.</span>
+    <span>No XSS — DOMPurify sanitizes, <code>unsafeHtmlTT()</code> renders the clean string.</span>
     <span class="outcome-label">What actually happens:</span>
-    <span class="outcome-match">✓ No alert — but nothing enforces that sanitization was called.</span>
+    <span class="outcome-match">✓ No alert — renders sanitized string.</span>
   </div>
 
   <div class="code-block">
-    <div class="code-block-label">demo-2.js</div>
+    <div class="code-block-label">demo-6.js</div>
 {% highlight "javascript" %}
 import { html, render } from 'lit-html';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { unsafeHtmlTT } from 'lit-html/directives/unsafe-html-tt.js';
 import DOMPurify from 'dompurify';
 
 document.getElementById('run-btn').addEventListener('click', () => {
@@ -28,7 +28,7 @@ document.getElementById('run-btn').addEventListener('click', () => {
   const sanitized = DOMPurify.sanitize(userInput);
   const target = document.getElementById('result');
   target.textContent = '';
-  render(html`<div>${unsafeHTML(sanitized)}</div>`, target);
+  render(html`<div>${unsafeHtmlTT(sanitized)}</div>`, target);
 });
 {% endhighlight %}
   </div>
@@ -41,9 +41,9 @@ document.getElementById('run-btn').addEventListener('click', () => {
   </div>
 
   <div class="page-nav">
-    <a href="{{ '/pages/1-xss-risk/' | url }}">← XSS Risk</a>
-    <a href="{{ '/pages/3-trusted-types-bypass/' | url }}">Next: TT Bypass →</a>
+    <a href="{{ '/pages/5-unsafehtmltt-compat/' | url }}">← TT: compat</a>
+    <a href="{{ '/pages/7-unsafehtmltt-tt-string/' | url }}">Next: TT: enforced →</a>
   </div>
 </article>
 
-<script type="module" src="{{ '/js/demo-2.js' | url }}"></script>
+<script type="module" src="{{ '/js/demo-6.js' | url }}"></script>

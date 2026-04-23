@@ -18,14 +18,20 @@ title: Home
     Open DevTools to see what's happening in each demo.
   </p>
 
-  <h3>The 6-Page Narrative</h3>
+  <h3>Block 1: <code>unsafeHTML</code> (original directive)</h3>
   <ol>
-    <li><a href="{{ '/pages/1-xss-risk/' | url }}"><strong>The XSS Risk</strong></a> — unsafeHTML with raw user input fires an alert.</li>
-    <li><a href="{{ '/pages/2-manual-sanitization/' | url }}"><strong>Manual Sanitization Helps (But Isn't Enforced)</strong></a> — DOMPurify stops the XSS, but nothing enforces its use.</li>
-    <li><a href="{{ '/pages/3-trusted-types-bypass/' | url }}"><strong>Trusted Types Doesn't Help (Today)</strong></a> — Even with TT active, Lit's internal policy blesses the XSS string.</li>
-    <li><a href="{{ '/pages/4-trusted-html-breaks/' | url }}"><strong>TrustedHTML Breaks Current unsafeHTML</strong></a> — Passing TrustedHTML to the existing directive throws an error.</li>
-    <li><a href="{{ '/pages/5-modified-directive/' | url }}"><strong>The Proposed Fix</strong></a> — A modified directive accepts TrustedHTML and inserts it safely.</li>
-    <li><a href="{{ '/pages/6-future-sethtml/' | url }}"><strong>Future Direction: setHTML()</strong></a> — The upcoming Sanitizer API offers a safe sink without Trusted Types.</li>
+    <li><a href="{{ '/pages/1-xss-risk/' | url }}"><strong>XSS Risk</strong></a> — raw string → alert fires.</li>
+    <li><a href="{{ '/pages/2-manual-sanitization/' | url }}"><strong>DOMPurify</strong></a> — sanitized string → no alert, but nothing enforces it.</li>
+    <li><a href="{{ '/pages/3-trusted-types-bypass/' | url }}"><strong>TT Bypass</strong></a> — TT on, raw string → alert fires anyway via Lit's internal policy.</li>
+    <li><a href="{{ '/pages/4-trusted-html-breaks/' | url }}"><strong>TH Breaks</strong></a> — TT on, <code>TrustedHTML</code> → throws. <code>unsafeHTML()</code> rejects non-strings.</li>
+  </ol>
+
+  <h3>Block 2: <code>unsafeHtmlTT</code> (modified directive)</h3>
+  <ol start="5">
+    <li><a href="{{ '/pages/5-unsafehtmltt-compat/' | url }}"><strong>TT: compat</strong></a> — no TT, raw string → alert fires (backward compat).</li>
+    <li><a href="{{ '/pages/6-unsafehtmltt-dompurify/' | url }}"><strong>TT: sanitize</strong></a> — no TT, sanitized string → no alert.</li>
+    <li><a href="{{ '/pages/7-unsafehtmltt-tt-string/' | url }}"><strong>TT: enforced</strong></a> — TT on, raw string → throws (correct).</li>
+    <li><a href="{{ '/pages/8-unsafehtmltt-tt-dompurify/' | url }}"><strong>TT: fix</strong></a> — TT on, <code>TrustedHTML</code> → renders safely. The fix works.</li>
   </ol>
 
   <h3>Key Code Locations</h3>

@@ -125,6 +125,37 @@
     .badge-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
+    .outcome-grid {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.4rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.88rem;
+      font-family: monospace;
+    }
+
+    .outcome-label {
+      color: #546e7a;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .outcome-match {
+      background: #f0fff4;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 0.15em 0.5em;
+      border-radius: 3px;
+    }
+
+    .outcome-mismatch {
+      background: #fff5f5;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 0.15em 0.5em;
+      border-radius: 3px;
+    }
+
     .code-block {
       margin: 1.5rem 0;
       border-radius: 6px;
@@ -162,6 +193,28 @@
       color: #546e7a;
     }
 
+    .demo-area label {
+      display: block;
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: #546e7a;
+      margin-bottom: 0.25rem;
+    }
+
+    textarea#user-input {
+      display: block;
+      width: 100%;
+      font-family: monospace;
+      font-size: 0.85rem;
+      border: 1px solid #b0bec5;
+      border-radius: 4px;
+      padding: 0.5rem;
+      background: white;
+      color: #1a1a2e;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+    }
+
     button.run-btn {
       background: #e63946;
       color: white;
@@ -193,6 +246,13 @@
     }
 
     button.run-btn:hover { background: #c1121f; }
+
+    #result {
+      margin-top: 1rem;
+      min-height: 2rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
 
     .result-box {
       margin-top: 1rem;
@@ -259,11 +319,13 @@
 <nav>
   <a href="{{ '/' | url }}" {% if page.url == "/" %}class="active"{% endif %}>Home</a>
   <a href="{{ '/pages/1-xss-risk/' | url }}" {% if page.url == "/pages/1-xss-risk/" %}class="active"{% endif %}>1. XSS Risk</a>
-  <a href="{{ '/pages/2-manual-sanitization/' | url }}" {% if page.url == "/pages/2-manual-sanitization/" %}class="active"{% endif %}>2. Manual Sanitization</a>
+  <a href="{{ '/pages/2-manual-sanitization/' | url }}" {% if page.url == "/pages/2-manual-sanitization/" %}class="active"{% endif %}>2. DOMPurify</a>
   <a href="{{ '/pages/3-trusted-types-bypass/' | url }}" {% if page.url == "/pages/3-trusted-types-bypass/" %}class="active"{% endif %}>3. TT Bypass</a>
-  <a href="{{ '/pages/4-trusted-html-breaks/' | url }}" {% if page.url == "/pages/4-trusted-html-breaks/" %}class="active"{% endif %}>4. TrustedHTML Breaks</a>
-  <a href="{{ '/pages/5-modified-directive/' | url }}" {% if page.url == "/pages/5-modified-directive/" %}class="active"{% endif %}>5. Proposed Fix</a>
-  <a href="{{ '/pages/6-future-sethtml/' | url }}" {% if page.url == "/pages/6-future-sethtml/" %}class="active"{% endif %}>6. Future: setHTML()</a>
+  <a href="{{ '/pages/4-trusted-html-breaks/' | url }}" {% if page.url == "/pages/4-trusted-html-breaks/" %}class="active"{% endif %}>4. TH Breaks</a>
+  <a href="{{ '/pages/5-unsafehtmltt-compat/' | url }}" {% if page.url == "/pages/5-unsafehtmltt-compat/" %}class="active"{% endif %}>5. TT: compat</a>
+  <a href="{{ '/pages/6-unsafehtmltt-dompurify/' | url }}" {% if page.url == "/pages/6-unsafehtmltt-dompurify/" %}class="active"{% endif %}>6. TT: sanitize</a>
+  <a href="{{ '/pages/7-unsafehtmltt-tt-string/' | url }}" {% if page.url == "/pages/7-unsafehtmltt-tt-string/" %}class="active"{% endif %}>7. TT: enforced</a>
+  <a href="{{ '/pages/8-unsafehtmltt-tt-dompurify/' | url }}" {% if page.url == "/pages/8-unsafehtmltt-tt-dompurify/" %}class="active"{% endif %}>8. TT: fix</a>
 </nav>
 
 <main>

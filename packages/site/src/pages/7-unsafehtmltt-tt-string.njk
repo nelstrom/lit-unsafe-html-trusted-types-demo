@@ -1,35 +1,33 @@
 ---
 layout: layout.njk
-title: "4. TH Breaks"
+title: "7. TT: enforced"
 csp: true
 ---
 
 <article>
-  <span class="badge badge-warning">THROWS</span>
-  <h2>4. TH Breaks</h2>
+  <span class="badge badge-success">THROWS (CORRECT)</span>
+  <h2>7. unsafeHtmlTT — TT On, String Input</h2>
 
   <div class="csp-indicator csp-on">● Trusted Types: ON</div>
 
   <div class="outcome-grid">
     <span class="outcome-label">Expected:</span>
-    <span>Renders safely — DOMPurify returns <code>TrustedHTML</code>, which <code>unsafeHTML()</code> should accept.</span>
+    <span>Throws — <code>unsafeHtmlTT()</code> rejects plain strings when TT is enforced.</span>
     <span class="outcome-label">What actually happens:</span>
-    <span class="outcome-mismatch">✗ Throws — <code>unsafeHTML()</code> rejects non-string values. Check DevTools console.</span>
+    <span class="outcome-match">✓ Throws — check DevTools console.</span>
   </div>
 
   <div class="code-block">
-    <div class="code-block-label">demo-4.js</div>
+    <div class="code-block-label">demo-7.js</div>
 {% highlight "javascript" %}
 import { html, render } from 'lit-html';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
-import DOMPurify from 'dompurify';
+import { unsafeHtmlTT } from 'lit-html/directives/unsafe-html-tt.js';
 
 document.getElementById('run-btn').addEventListener('click', () => {
   const userInput = document.getElementById('user-input').value;
-  const trustedHtml = DOMPurify.sanitize(userInput, { RETURN_TRUSTED_TYPE: true });
   const target = document.getElementById('result');
   target.textContent = '';
-  render(html`<div>${unsafeHTML(trustedHtml)}</div>`, target);
+  render(html`<div>${unsafeHtmlTT(userInput)}</div>`, target);
 });
 {% endhighlight %}
   </div>
@@ -42,9 +40,9 @@ document.getElementById('run-btn').addEventListener('click', () => {
   </div>
 
   <div class="page-nav">
-    <a href="{{ '/pages/3-trusted-types-bypass/' | url }}">← TT Bypass</a>
-    <a href="{{ '/pages/5-unsafehtmltt-compat/' | url }}">Next: TT: compat →</a>
+    <a href="{{ '/pages/6-unsafehtmltt-dompurify/' | url }}">← TT: sanitize</a>
+    <a href="{{ '/pages/8-unsafehtmltt-tt-dompurify/' | url }}">Next: TT: fix →</a>
   </div>
 </article>
 
-<script type="module" src="{{ '/js/demo-4.js' | url }}"></script>
+<script type="module" src="{{ '/js/demo-7.js' | url }}"></script>

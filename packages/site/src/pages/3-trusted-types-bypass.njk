@@ -1,81 +1,47 @@
 ---
 layout: layout.njk
-title: "3. Trusted Types Doesn't Help (Today)"
+title: "3. TT Bypass"
 csp: true
 ---
 
 <article>
   <span class="badge badge-danger">BYPASS</span>
-  <h2>3. Trusted Types Doesn't Help (Today)</h2>
+  <h2>3. TT Bypass</h2>
 
-  <div class="csp-indicator csp-on">
-    ● Trusted Types: ON — <code>require-trusted-types-for 'script'; trusted-types dompurify lit-html</code>
+  <div class="csp-indicator csp-on">● Trusted Types: ON</div>
+
+  <div class="outcome-grid">
+    <span class="outcome-label">Expected:</span>
+    <span>Trusted Types blocks the raw string — no alert.</span>
+    <span class="outcome-label">What actually happens:</span>
+    <span class="outcome-mismatch">✗ Alert fires anyway — Lit's internal <code>'lit-html'</code> policy bypasses TT.</span>
   </div>
 
-  <p>
-    This page enforces Trusted Types via a <code>Content-Security-Policy</code> meta tag.
-    Normally, this would block any raw string from being assigned to <code>innerHTML</code>.
-  </p>
-
-  <p>
-    <strong>But the alert still fires.</strong> Why? Lit registers a <code>'lit-html'</code>
-    Trusted Types policy at startup — a no-op identity function:
-  </p>
-
   <div class="code-block">
-    <div class="code-block-label">lit-html.ts:263–267 — the internal no-op policy</div>
-{% highlight "javascript" %}
-const policy = trustedTypes
-  ? trustedTypes.createPolicy('lit-html', {
-      createHTML: (s) => s,  // identity function — blesses any string!
-    })
-  : undefined;
-{% endhighlight %}
-  </div>
-
-  <p>
-    <code>unsafeHTML</code> feeds the raw XSS string through this policy, converting
-    it to <code>TrustedHTML</code> — then Lit sets <code>innerHTML</code> with it.
-    Trusted Types is satisfied, but the browser still executes the payload.
-  </p>
-
-  <div class="code-block">
-    <div class="code-block-label">demo-3.js — what you're running</div>
+    <div class="code-block-label">demo-3.js</div>
 {% highlight "javascript" %}
 import { html, render } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 
-// Trusted Types is active on this page, but unsafeHTML bypasses it via
-// Lit's internal 'lit-html' policy (createHTML: s => s).
-const payload = `<img src=x onerror="alert('TT bypass!')">`;
-
-render(
-  html`<div>${unsafeHTML(payload)}</div>`,
-  document.querySelector('#result')
-);
+document.getElementById('run-btn').addEventListener('click', () => {
+  const userInput = document.getElementById('user-input').value;
+  const target = document.getElementById('result');
+  target.textContent = '';
+  render(html`<div>${unsafeHTML(userInput)}</div>`, target);
+});
 {% endhighlight %}
   </div>
 
   <div class="demo-area">
-    <h3>Interactive Demo</h3>
-    <p style="font-size:0.85rem;color:#546e7a;margin-top:0">
-      Open DevTools → Console. Trusted Types is active but the alert fires anyway.
-    </p>
+    <label for="user-input">HTML input:</label>
+    <textarea id="user-input" rows="3"><img src=x onerror="alert('TT bypass!')"> Hello!</textarea>
     <button class="run-btn" id="run-btn">Run Demo</button>
-    <div class="result-box" id="result">
-      <em style="color:#999">Output will appear here after clicking "Run Demo".</em>
-    </div>
+    <div id="result"></div>
   </div>
 
-  <p style="margin-top:1.5rem">
-    This is the core of the problem: Lit's <code>'lit-html'</code> policy acts as a
-    universal bypass, defeating the browser's injection-sink enforcement for all
-    <code>unsafeHTML()</code> calls.
-  </p>
-
   <div class="page-nav">
-    <a href="{{ '/pages/2-manual-sanitization/' | url }}">← Manual Sanitization</a>
-    <a href="{{ '/pages/4-trusted-html-breaks/' | url }}">Next: TrustedHTML Breaks unsafeHTML →</a>
+    <a href="{{ '/pages/2-manual-sanitization/' | url }}">← DOMPurify</a>
+    <a href="{{ '/pages/4-trusted-html-breaks/' | url }}">Next: TH Breaks →</a>
   </div>
 </article>
 

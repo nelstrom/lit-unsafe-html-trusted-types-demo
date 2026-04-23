@@ -87,14 +87,21 @@ You can't interpolate `setHTML()` into a template — it returns `void` and oper
 
 ## Running the Demo
 
-The demo site walks through six pages showing the progression from XSS vulnerability to the proposed fix:
+The demo site walks through eight pages in two blocks.
 
-1. XSS Risk — `unsafeHTML` with no sanitization
-2. Manual Sanitization — DOMPurify without Trusted Types
-3. Trusted Types Bypass — Lit's internal policy defeats enforcement
-4. TrustedHTML Breaks — passing TrustedHTML to standard `unsafeHTML` fails
-5. The Proposed Fix — `unsafeHtmlTT` with DOMPurify + Trusted Types
-6. Future: setHTML() — the Sanitizer API approach
+**Block 1: `unsafeHTML` (original directive)**
+
+1. XSS Risk — raw string → alert fires
+2. DOMPurify — sanitized string → no alert, but nothing enforces it
+3. TT Bypass — TT active, raw string → alert fires anyway via Lit's internal policy
+4. TH Breaks — TT active, `TrustedHTML` → throws; `unsafeHTML()` rejects non-strings
+
+**Block 2: `unsafeHtmlTT` (modified directive)**
+
+5. TT: compat — no TT, raw string → alert fires (backward-compatible fallback)
+6. TT: sanitize — no TT, sanitized string → no alert
+7. TT: enforced — TT active, raw string → throws (correct — strings rejected)
+8. TT: fix — TT active, `TrustedHTML` → renders safely; the fix works
 
 **Live site:** https://nelstrom.github.io/lit-unsafe-html-trusted-types-demo/
 

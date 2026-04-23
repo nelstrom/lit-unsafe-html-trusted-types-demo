@@ -29,17 +29,20 @@ Since the platform can't know about library-defined sinks, the library must enfo
 
 ## Detecting Trusted Types Mode
 
-Checking `window.trustedTypes` only tells you the browser supports the API — it doesn't tell you whether the site has opted into enforcement via CSP. A modern browser will have the API regardless of CSP headers.
+The presence of `window.trustedTypes` only tells you the browser supports the API. It says nothing about whether the current page has opted in. To know whether violations will actually be *blocked*, a runtime probe is required: attempt a raw string assignment to a DOM sink, and observe whether it throws.
 
-There are three meaningful states:
+In principle there are four states:
 
 | State | Description |
 |-------|-------------|
-| `unsupported` | Older browser, no Trusted Types API |
-| `available` | API exists, but CSP hasn't enabled enforcement |
+| `unsupported` | Older browser — no Trusted Types API |
+| `available` | API exists, but no CSP directive has enabled enforcement |
+| `report-only` | CSP uses `Content-Security-Policy-Report-Only` — violations are logged but not blocked |
 | `enforced` | CSP is actively blocking violations |
 
-The proposed approach uses a runtime probe:
+The `report-only` state is indistinguishable from `available` at runtime: both allow the raw string assignment to succeed. Because the probe can't tell them apart, they collapse into a single detectable state. The practical consequence is that a directive running in a report-only context will behave as if Trusted Types is off — it won't reject plain strings. This is arguably correct: if the page isn't blocking violations, enforcing at the directive level would be unnecessarily strict.
+
+The runtime probe collapses to three detectable states:
 
 ```typescript
 type TrustedTypesMode = 'unsupported' | 'available' | 'enforced';
@@ -50,7 +53,7 @@ const getTrustedTypesMode = (): TrustedTypesMode => {
   }
   try {
     document.createElement('div').innerHTML = '';
-    return 'available';
+    return 'available'; // also covers report-only
   } catch {
     return 'enforced';
   }

@@ -14,6 +14,30 @@ import type {TrustedHTML} from '../types.js';
 
 const HTML_RESULT = 1;
 
+type TrustedTypesMode = 'unsupported' | 'available' | 'enforced';
+
+/**
+ * Distinguishes between three states:
+ * - 'unsupported': browser has no Trusted Types API
+ * - 'available':   API exists but CSP hasn't enabled enforcement
+ * - 'enforced':    CSP is actively blocking violations
+ *
+ * Checking window.trustedTypes alone only covers the first case. A modern
+ * browser exposes the API regardless of CSP, so we probe by attempting a
+ * plain-string innerHTML assignment and catching the resulting TypeError.
+ */
+const getTrustedTypesMode = (): TrustedTypesMode => {
+  if (typeof window === 'undefined' || !window.trustedTypes) {
+    return 'unsupported';
+  }
+  try {
+    document.createElement('div').innerHTML = '';
+    return 'available';
+  } catch {
+    return 'enforced';
+  }
+};
+
 export class UnsafeHTMLTTDirective extends Directive {
   static directiveName = 'unsafeHtmlTT';
   static resultType = HTML_RESULT;
@@ -55,10 +79,12 @@ export class UnsafeHTMLTTDirective extends Directive {
       return noChange;
     }
 
-    // Case 2: Plain string with Trusted Types active — enforce policy.
-    if (typeof value === 'string' && typeof window !== 'undefined' && window.trustedTypes) {
+    // Case 2: Plain string with Trusted Types *enforced* — reject it.
+    // We check for 'enforced' rather than just 'available': the API existing
+    // in the browser doesn't mean the site has opted into enforcement via CSP.
+    if (typeof value === 'string' && getTrustedTypesMode() === 'enforced') {
       throw new Error(
-        `unsafeHtmlTT() received a plain string while Trusted Types is active. ` +
+        `unsafeHtmlTT() received a plain string while Trusted Types is enforced. ` +
           `Pass a TrustedHTML object (e.g. from DOMPurify with RETURN_TRUSTED_TYPE: true).`
       );
     }

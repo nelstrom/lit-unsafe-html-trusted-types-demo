@@ -8,8 +8,10 @@ const {showReset} = setupDemoArea();
 document.getElementById('run-btn').addEventListener('click', () => {
   const userInput = document.getElementById('user-input').value;
   const sanitized = DOMPurify.sanitize(userInput);
-  const target = document.getElementById('result');
-  target.textContent = '';
-  render(html`<div>${unsafeHTML(sanitized)}</div>`, target);
+  const result = document.getElementById('result');
+  result.textContent = '';
+  const litTarget = document.createElement('div');
+  result.appendChild(litTarget);
+  render(html`<div>${unsafeHTML(sanitized)}</div>`, litTarget);
   showReset();
 });

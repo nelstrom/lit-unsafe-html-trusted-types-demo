@@ -6,8 +6,10 @@ const {showReset} = setupDemoArea();
 
 document.getElementById('run-btn').addEventListener('click', () => {
   const userInput = document.getElementById('user-input').value;
-  const target = document.getElementById('result');
-  target.textContent = '';
-  render(html`<div>${unsafeHTML(userInput)}</div>`, target);
+  const result = document.getElementById('result');
+  result.textContent = '';
+  const litTarget = document.createElement('div');
+  result.appendChild(litTarget);
+  render(html`<div>${unsafeHTML(userInput)}</div>`, litTarget);
   showReset();
 });

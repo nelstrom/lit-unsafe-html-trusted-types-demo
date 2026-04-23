@@ -8,7 +8,9 @@ setupDemoArea();
 document.getElementById('run-btn').addEventListener('click', () => {
   const userInput = document.getElementById('user-input').value;
   const trustedHtml = DOMPurify.sanitize(userInput, {RETURN_TRUSTED_TYPE: true});
-  const target = document.getElementById('result');
-  target.textContent = '';
-  render(html`<div>${unsafeHTML(trustedHtml)}</div>`, target);
+  const result = document.getElementById('result');
+  result.textContent = '';
+  const litTarget = document.createElement('div');
+  result.appendChild(litTarget);
+  render(html`<div>${unsafeHTML(trustedHtml)}</div>`, litTarget);
 });
